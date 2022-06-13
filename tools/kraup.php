@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
-<title>FILE RETURNS</title>
+<title>Printing</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -42,7 +42,7 @@ body {
 .signup-form h2:before, .signup-form h2:after {
 	content: "";
 	height: 2px;
-	width: 23%;
+	width: 18%;
 	background: #0328fa;
 	position: absolute;
 	top: 50%;
@@ -101,12 +101,25 @@ body {
 }  
 </style>
 </head>
+<script>
+function ChangeDrop()
+{
+    var state=document.getElementById("exampleFormControlSelect1").value;
+    if(state=="NL")
+    {
+        document.getElementById("file").style.visibility='hidden';
+    }
+    
+}
+
+</script>
 <body>
 <div class="signup-form">
-    <form action="file.php" method="post">
-		<h2>FILE RETURNS</h2>
-		<p class="hint-text">Provide the following details to enable us file your returns</p>
+    <form action="kraup.php" method="post" enctype="multipart/form-data" >
+		<h2>Print SERVICES</h2>
+		<p class="hint-text">Tell us The service you need.</p>
         <div class="form-group">
+			
 			<div class="row">
 				<div class="col"><input type="text" class="form-control" name="email" placeholder="Email" required="required"></div>
 			
@@ -115,12 +128,37 @@ body {
         <div class="form-group">
         	<input type="text" class="form-control" name="phone" placeholder="phone" required="required">
         </div>
+	
+       
+        <div class="form-group">
+          <select class="form-control" id="exampleFormControlSelect1"  onchange="ChangeDrop(this.value);" name="pf">
+            <option value="" selected="selected" hidden="hidden">TYPE OF RETURN</option>
+            <option value="NL">NIL RETURN</option>
+            <option value="EP">EMPLOYEE RETURNS</option>
+            <option value="CR">COMPANY RETURNS</option>
+          </select>
+           
+        </div>
+
+
+
+
+
 		<div class="form-group">
             <input type="pin" class="form-control" name="pin" placeholder="KRA PIN" required="required">
         </div>
 		<div class="form-group">
             <input type="pass" class="form-control" name="pass" placeholder="KRA PASSWORD" required="required">
-        </div>        
+        </div>  
+        
+	
+		<div class="form-group">
+        	<input type="file" class="form-control" name="file1" id="file"   placeholder="Delivery point" required="required">
+        </div>
+     
+		
+		
+		
 		<div class="form-group">
             <button type="DONE" name="DONE" style=" background-color: #0328fa;" class="btn btn-success btn-lg btn-block">DONE</button>
         </div>
@@ -128,4 +166,48 @@ body {
 	
 </div>
 </body>
+
+
 </html>
+
+
+
+
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+if (isset($_POST['DONE']) &&(isset($_FILES['file1']))) {
+    
+   
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $pf = $_POST['pf'];
+    $pin = $_POST['pin'];
+    $pass = $_POST['pass'];
+    $pname = rand(1000,10000)."-".$_FILES["file1"]["name"];
+    $file1_name =$_FILES['file1'] ['name'];
+    $file1_size =$_FILES['file1'] ['size'];
+    $tmp_name =$_FILES['file1'] ['tmp_name'];
+    $error =$_FILES['file1'] ['error'];
+    $uploads_dir = 'images';
+    move_uploaded_file($tmp_name, $uploads_dir.'/'.$pname);
+    $host = "localhost";
+        $dbUsername = "root";
+        $dbPassword = "";
+        $dbName = "print";
+
+        $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
+
+        if ($conn->connect_error) {
+            die('Could not connect to the database.');
+        }
+        else {
+            $Insert = "INSERT INTO kra(email,phone,pf,pin,pass,pname) values(?,?,?,?,?,?)";
+                $stmt = $conn->prepare($Insert);
+                $stmt->bind_param("sissss",$email,$phone, $pf , $pin, $pass, $pname);
+                if ($stmt->execute()) {
+                     echo header( 'location: ../head.php');
+                }
+            }
+        }
+?>
