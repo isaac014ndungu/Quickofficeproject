@@ -76,7 +76,7 @@
         <div class="d-flex flex-row justify-content-around">
           <div class="mpesa"><span>Mpesa </span></div>
           <div><span>Paypal</span></div>
-          <div><span>Card</span></div>
+         P <div><span>Card</span></div>
         </div>
         <div class="media mt-4 pl-2">
           <img src="./images/1200px-M-PESA_LOGO-01.svg.png" class="mr-3" height="75" />
